@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Hamming</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">
+    <img src="imagenes/logoutn.png" alt="UTN-FRT" class="logo">
+</div>
+
+<div class="container">
+    <h2>Codificador Hamming</h2>
+    <p>Ingrese la secuencia binaria de datos:</p>
+    <label for="inputData"></label>
+    <input type="text" id="inputData" placeholder="Ingrese la secuencia, ej. 1011101">
+    <button id="encodeButton">Codificar</button>
+
+    <!-- Tabla Hamming para Codificación -->
+    <div class="table-container" id="hammingTable" style="display: none;">
+        <h3>Tabla de Hamming - Codificación</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Posición Binaria</th>
+                    <th>Bit</th>
+                    <th>Tipo de Bit</th>
+                    <th>Bits que controla</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+        <p id="paridadCount"></p>
+    </div>
+
+    <div class="result-container" id="outputContainer" style="display: none;">
+        <p id="output"></p>
+    </div>
+
+    <p>Ingrese el código Hamming recibido:</p>
+    <label for="detectInput"></label>
+    <input type="text" id="detectInput" placeholder="Ingrese el código, ej. 01100110111">
+    <button id="detectButton">Detectar error</button>
+
+    <div class="table-container" id="hammingTableDetect" style="display: none;">
+        <h3>Tabla de Hamming - Detección y Corrección</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Posición Binaria</th>
+                    <th>Bit</th>
+                    <th>Tipo de Bit</th>
+                    <th>Bits que controla</th>
+                </tr>
+            </thead>
+            <tbody id="tableBodyDetect">
+            </tbody>
+        </table>
+        <p id="paridadCountDetect"></p>
+    </div>
+
+    <div class="result-container" id="detectOutputContainer" style="display: none;">
+        <p id="detectOutput"></p>
+    </div>
+</div>
+
+<a href="#" id="infoLink" class="info-icon" title="Ver manual de usuario">i</a>
+
+<footer>
+    <p>Rocío Jaluf</p>
+    <p>Comunicaciones 2024</p>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
