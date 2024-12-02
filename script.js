@@ -33,72 +33,61 @@ function encode(input) {
 
 function mostrarTablaHamming(encoded, p) {
     const tableBody = document.getElementById("tableBody");
-    tableBody.innerHTML = '';  
-    let paridadCount = 0;
+    tableBody.innerHTML = '';
 
     for (let i = 0; i < encoded.length; i++) {
         const row = document.createElement("tr");
 
         const posCell = document.createElement("td");
-        posCell.textContent = i + 1; 
+        posCell.textContent = i + 1;
         row.appendChild(posCell);
 
         const binarioCell = document.createElement("td");
-        if (isPowerOfTwo(i + 1)) {
-            binarioCell.textContent = `P${Math.log2(i + 1) + 1}`;  
-        } else {
-            binarioCell.textContent = encoded[i];  
-        }
+        binarioCell.textContent = encoded[i];
         row.appendChild(binarioCell);
 
         const tipoCell = document.createElement("td");
-        if (isPowerOfTwo(i + 1)) {
-            tipoCell.textContent = 'Paridad';
-            paridadCount++;
-        } else {
-            tipoCell.textContent = 'Dato';
-        }
+        tipoCell.textContent = isPowerOfTwo(i + 1) ? 'Paridad' : 'Dato';
         row.appendChild(tipoCell);
 
-        const controlaCell = document.createElement("td");
+        const controladosCell = document.createElement("td");
         if (isPowerOfTwo(i + 1)) {
-            const controla = obtenerControla(i + 1, encoded.length);
-            controlaCell.textContent = controla.join(", ");
+            controladosCell.textContent = obtenerBitsControlados(encoded.length, i + 1).join(', ');
         } else {
-            controlaCell.textContent = '-';
+            controladosCell.textContent = '-';
         }
-        row.appendChild(controlaCell);
+        row.appendChild(controladosCell);
 
         tableBody.appendChild(row);
     }
 
-    document.getElementById("paridadCount").textContent = `Cantidad de bits de paridad: ${paridadCount}`;
-
     document.getElementById("hammingTable").style.display = "block";
 }
 
-function isPowerOfTwo(n) {
-    return (n & (n - 1)) === 0;
+function obtenerBitsControlados(encodedLength, posicionParidad) {
+    const controlados = [];
+    for (let j = 1; j <= encodedLength; j++) {
+        if ((j & posicionParidad) !== 0) {
+            controlados.push(j);
+        }
+    }
+    return controlados;
 }
 
 function calculoParidad(encoded, posicionParidad) {
     let contador = 0;
+
     for (let j = 1; j <= encoded.length; j++) {
         if ((j & posicionParidad) !== 0 && encoded[j - 1] === '1') {
             contador++;
         }
     }
+
     return contador % 2 === 0 ? '0' : '1';
 }
 
-function obtenerControla(posicion, longitud) {
-    const controla = [];
-    for (let i = 1; i <= longitud; i++) {
-        if ((i & posicion) !== 0) {
-            controla.push(i);
-        }
-    }
-    return controla;
+function isPowerOfTwo(n) {
+    return (n & (n - 1)) === 0;
 }
 
 function detectorYCorrector(input) {
@@ -112,9 +101,8 @@ function detectorYCorrector(input) {
     for (let i = 0; Math.pow(2, i) <= n; i++) {
         const posicionParidad = Math.pow(2, i);
         const paridadCalculada = calculoParidad(input.split(''), posicionParidad);
-        const paridadRecibida = input[posicionParidad - 1];
 
-        if (paridadCalculada !== paridadRecibida) {
+        if (paridadCalculada === '1') {
             errorPos += posicionParidad;
         }
     }
@@ -123,8 +111,8 @@ function detectorYCorrector(input) {
 
     if (errorPos !== 0) {
         const corregido = input.split('');
-        corregido[errorPos - 1] = corregido[errorPos - 1] === '0' ? '1' : '0';
-        return `Error detectado en la posición ${errorPos}. Código corregido: ${corregido.join('')}`;
+        corregido[errorPos - 1] = corregido[errorPos - 1] === '1' ? '0' : '1';
+        return `Error detectado en la posición ${errorPos}.\n\n Código corregido: ${corregido.join('')}`;
     } else {
         return "No se detectaron errores.";
     }
@@ -132,7 +120,7 @@ function detectorYCorrector(input) {
 
 function mostrarTablaHammingDetect(encoded, errorPos) {
     const tableBodyDetect = document.getElementById("tableBodyDetect");
-    tableBodyDetect.innerHTML = ''; 
+    tableBodyDetect.innerHTML = '';
 
     for (let i = 0; i < encoded.length; i++) {
         const row = document.createElement("tr");
@@ -142,30 +130,25 @@ function mostrarTablaHammingDetect(encoded, errorPos) {
         row.appendChild(posCell);
 
         const binarioCell = document.createElement("td");
-        if (isPowerOfTwo(i + 1)) {
-            binarioCell.textContent = `P${Math.log2(i + 1) + 1}`;  
-        } else {
-            binarioCell.textContent = encoded[i];  // Mostrar bit de dato
-        }
+        binarioCell.textContent = encoded[i];
         row.appendChild(binarioCell);
 
         const tipoCell = document.createElement("td");
         tipoCell.textContent = isPowerOfTwo(i + 1) ? 'Paridad' : 'Dato';
         row.appendChild(tipoCell);
 
-        const controlaCell = document.createElement("td");
+        const controladosCell = document.createElement("td");
         if (isPowerOfTwo(i + 1)) {
-            const controla = obtenerControla(i + 1, encoded.length);
-            controlaCell.textContent = controla.join(", ");
+            controladosCell.textContent = obtenerBitsControlados(encoded.length, i + 1).join(', ');
         } else {
-            controlaCell.textContent = '-';
+            controladosCell.textContent = '-';
         }
+        row.appendChild(controladosCell);
 
         if (i === errorPos - 1) {
-            row.classList.add('error');  // Marcar la fila con error
+            row.classList.add('error');
         }
 
-        row.appendChild(controlaCell);
         tableBodyDetect.appendChild(row);
     }
 
@@ -188,6 +171,6 @@ document.getElementById('detectButton').addEventListener('click', function () {
 
 const infoLink = document.getElementById('infoLink');
 infoLink.addEventListener('click', (event) => {
-    event.preventDefault(); 
+    event.preventDefault();
     window.open('manual/ManualUsuario.pdf', '_blank');
 });
